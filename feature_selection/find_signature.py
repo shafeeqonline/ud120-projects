@@ -3,6 +3,7 @@
 import pickle
 import numpy
 numpy.random.seed(42)
+from sklearn import tree
 
 
 ### The words (features) and authors (labels), already largely processed.
@@ -21,12 +22,16 @@ authors = pickle.load( open(authors_file, "r") )
 ### classifier functions in versions 0.15.2 and earlier
 from sklearn import cross_validation
 features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(word_data, authors, test_size=0.1, random_state=42)
+print len(features_train)
+
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                              stop_words='english')
 features_train = vectorizer.fit_transform(features_train)
 features_test  = vectorizer.transform(features_test).toarray()
+final_feature_names = vectorizer.get_feature_names();
+print "maximum feature provider", final_feature_names[21323]
 
 
 ### a classic way to overfit is to use a small number
@@ -40,4 +45,10 @@ labels_train   = labels_train[:150]
 ### your code goes here
 
 
-
+clf = tree.DecisionTreeClassifier()
+clf.fit(features_train, labels_train)
+print "Accuracy", clf.score(features_test, labels_test)
+print clf.feature_importances_
+for val, x in enumerate(clf.feature_importances_):
+    if float(x) > 0.2:
+        print x, val

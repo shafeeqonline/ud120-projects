@@ -3,6 +3,9 @@
 import matplotlib.pyplot as plt
 from prep_terrain_data import makeTerrainData
 from class_vis import prettyPicture
+from sklearn.ensemble import RandomForestClassifier
+
+from time import time
 
 features_train, labels_train, features_test, labels_test = makeTerrainData()
 
@@ -27,10 +30,29 @@ plt.ylabel("grade")
 plt.show()
 ################################################################################
 
+#k nearest neighbors
+# random forest
+# adaboost (sometimes also called boosted decision tree)
 
 ### your code here!  name your classifier object clf if you want the 
 ### visualization code (prettyPicture) to show you the decision boundary
 
+
+
+clf = RandomForestClassifier(max_depth=2, random_state=0)
+
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+t1 = time()
+pred = clf.predict(features_test)
+print "prediction time:", round(time()-t1, 3), "s"
+print "10th result", pred[10]
+print "26th result", pred[26]
+print "50th result", pred[50]
+print "Total chris mails predicted is ", numpy.count_nonzero(pred == 1)
+print("Accuracy of this Vector model", clf.score(features_test, labels_test))
 
 
 

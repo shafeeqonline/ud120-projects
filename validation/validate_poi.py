@@ -14,6 +14,8 @@ import pickle
 import sys
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
+from sklearn.cross_validation import train_test_split
+from sklearn.tree import DecisionTreeClassifier
 
 data_dict = pickle.load(open("../final_project/final_project_dataset.pkl", "r") )
 
@@ -29,4 +31,9 @@ labels, features = targetFeatureSplit(data)
 
 ### it's all yours from here forward!  
 
+a_train, a_test, b_train, b_test = train_test_split(features, labels, test_size=0.3, random_state=42)
 
+
+clf = DecisionTreeClassifier(random_state=0)
+clf.fit(a_train, b_train)
+print(clf.score(a_test, b_test))

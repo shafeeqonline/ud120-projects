@@ -11,6 +11,7 @@ import pickle
 import numpy
 import matplotlib.pyplot as plt
 import sys
+from sklearn.preprocessing import MinMaxScaler
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 
@@ -44,15 +45,28 @@ data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r")
 data_dict.pop("TOTAL", 0)
 
 
+
+
 ### the input features we want to use 
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
 data = featureFormat(data_dict, features_list )
 poi, finance_features = targetFeatureSplit( data )
 
+maxf1 = 0
+minf1 = 100000000
+
+for f1, f2 in finance_features:
+    if maxf1 < f1:
+        maxf1 = f1
+    if bool(f1) and minf1 > f1 :
+        minf1 = f1
+
+print maxf1, minf1
 
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
@@ -65,7 +79,14 @@ plt.show()
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
 
-
+from sklearn.cluster import KMeans
+# finance_features = preprocessing.MinMaxScaler(finance_features)
+scaler = MinMaxScaler()
+scaler.fit(finance_features)
+finance_features = scaler.transform(finance_features)
+# print finance_features
+kmeans = KMeans(n_clusters=2, random_state=0).fit(finance_features)
+pred = kmeans.predict(finance_features)
 
 
 ### rename the "name" parameter when you change the number of features
